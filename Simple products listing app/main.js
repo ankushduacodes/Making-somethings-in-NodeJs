@@ -2,7 +2,7 @@
 
 const express = require("express");
 const fs = require("fs");
-let products = require("./products")
+const bodyParser = require("body-parser");
 const app = express()
 const port = 3000;
 
@@ -21,7 +21,28 @@ function renderProduct(product, productCardTemplate) {
     return output;
 }
 
+const getProductId = () => {
+    const randomId = Math.floor(Math.random() * 10000)
+    const productIds = new Set(
+        JSON.parse(
+            fs.readFileSync(
+                `${__dirname}/products.json`, 'utf-8'
+            )).map(product => product.id)
+    );
+    if (productIds.has(randomId)) {
+        getProductId()
+    }
+    productIds.add(randomId);
+    return randomId;
+}
+
+app.use(bodyParser.json())
+app.use(express.urlencoded({
+    extended: true
+}))
+
 app.get('/', (req, res) => {
+    const products = JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8'));
     const productsTemplate = products.map(
         (product) => renderProduct(product, productCardTemplate)
     ).join('')
@@ -30,6 +51,7 @@ app.get('/', (req, res) => {
 
 
 app.get("/product", (req, res) => {
+    const products = JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8'));
     const id = Number(req.query.id);
     const product = products.find(product => product.id === id);
     if (!product) {
@@ -38,6 +60,20 @@ app.get("/product", (req, res) => {
     }
     const productdescTemplate = renderProduct(product, productDescriptionTemplate)
     res.end(productdescTemplate, "utf-8");
+})
+
+app.get("/add", (req, res) => {
+    res.sendFile(`${__dirname}/templates/form.html`);
+})
+
+app.post("/add", (req, res) => {
+    const products = JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8'));
+    const newProduct = req.body;
+    newProduct.id = getProductId();
+    newProduct.organic = !newProduct.organic ? false : true;
+    products.push(newProduct);
+    fs.writeFileSync(`${__dirname}/products.json`, JSON.stringify(products), 'utf-8')
+    res.redirect('/');
 })
 
 
