@@ -6,6 +6,11 @@ const bodyParser = require("body-parser");
 const app = express()
 const port = 3000;
 
+app.use(bodyParser.json())
+app.use(express.urlencoded({
+    extended: true
+}))
+
 const overviewTemplate = fs.readFileSync(`${__dirname}/templates/template-overview.html`, 'utf-8')
 const productCardTemplate = fs.readFileSync(`${__dirname}/templates/card-template.html`, 'utf-8')
 const productDescriptionTemplate = fs.readFileSync(`${__dirname}/templates/product-description-template.html`, 'utf-8')
@@ -21,25 +26,20 @@ function renderProduct(product, productCardTemplate) {
     return output;
 }
 
-const getProductId = () => {
-    const randomId = Math.floor(Math.random() * 10000)
+const createProductId = () => {
     const productIds = new Set(
         JSON.parse(
             fs.readFileSync(
                 `${__dirname}/products.json`, 'utf-8'
             )).map(product => product.id)
     );
-    if (productIds.has(randomId)) {
-        getProductId()
+    let randomId = Math.floor(Math.random() * 10000000)
+    while(productIds.has(randomId)) {
+        // add retries to limit how many times loop fails before we tell user that product could not be added
+        randomId = Math.floor(Math.random() * 10000000)
     }
-    productIds.add(randomId);
     return randomId;
 }
-
-app.use(bodyParser.json())
-app.use(express.urlencoded({
-    extended: true
-}))
 
 app.get('/', (req, res) => {
     const products = JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8'));
@@ -69,12 +69,24 @@ app.get("/add", (req, res) => {
 app.post("/add", (req, res) => {
     const products = JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8'));
     const newProduct = req.body;
-    newProduct.id = getProductId();
+    newProduct.id = createProductId();
     newProduct.organic = !newProduct.organic ? false : true;
     products.push(newProduct);
-    fs.writeFileSync(`${__dirname}/products.json`, JSON.stringify(products), 'utf-8')
+    fs.writeFileSync(`${__dirname}/products.json`, JSON.stringify(products, null, 2), 'utf-8')
     res.redirect('/');
 })
 
+app.get("/delete", (req, res) => {
+    let products = JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8'));
+    const id = Number(req.query.id);
+    const product = products.find(product => product.id === id);
+    if (!product) {
+        res.status(404);
+        res.end("<h1>Product not found</h1>");
+    }
+    products = products.filter(item => item !== product);
+    fs.writeFileSync(`${__dirname}/products.json`, JSON.stringify(products, null, 2), 'utf-8')
+    res.redirect('/');
+})
 
 app.listen(port, () => console.log(`app listening on http://localhost:${port}`))
