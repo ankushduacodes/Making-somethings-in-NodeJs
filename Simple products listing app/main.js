@@ -2,7 +2,9 @@
 
 const express = require("express");
 const fs = require("fs");
+const bodyParser = require("body-parser");
 let products = require("./products")
+const productIds = new Set(products.map(product => product.id));
 const app = express()
 const port = 3000;
 
@@ -21,6 +23,20 @@ function renderProduct(product, productCardTemplate) {
     return output;
 }
 
+const getProductId = () => {
+    const randomId = Math.floor(Math.random() * 10000)
+    if (productIds.has(randomId)) {
+        getProductId()
+    }
+    productIds.add(randomId);
+    return randomId;
+}
+
+app.use(bodyParser.json())
+app.use(express.urlencoded({
+    extended: true
+}))
+
 app.get('/', (req, res) => {
     const productsTemplate = products.map(
         (product) => renderProduct(product, productCardTemplate)
@@ -38,6 +54,18 @@ app.get("/product", (req, res) => {
     }
     const productdescTemplate = renderProduct(product, productDescriptionTemplate)
     res.end(productdescTemplate, "utf-8");
+})
+
+app.get("/add", (req, res) => {
+    res.sendFile(`${__dirname}/templates/form.html`);
+})
+
+app.post("/add", (req, res) => {
+    const newProduct = req.body;
+    newProduct.id = getProductId();
+    newProduct.organic = !newProduct.organic ? false : true;
+    products.push(newProduct);
+    res.redirect('/');
 })
 
 
