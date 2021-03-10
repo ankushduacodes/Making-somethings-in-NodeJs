@@ -10,6 +10,7 @@ app.use(bodyParser.json())
 app.use(express.urlencoded({
     extended: true
 }))
+app.use(express.static(__dirname + "/static"))
 
 const overviewTemplate = fs.readFileSync(`${__dirname}/templates/template-overview.html`, 'utf-8')
 const productCardTemplate = fs.readFileSync(`${__dirname}/templates/card-template.html`, 'utf-8')
