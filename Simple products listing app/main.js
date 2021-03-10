@@ -63,6 +63,7 @@ app.get("/product", (req, res) => {
     res.end(productdescTemplate, "utf-8");
 })
 
+// TODO: add server side validations
 app.get("/add", (req, res) => {
     res.sendFile(`${__dirname}/templates/form.html`);
 })
