@@ -15,5 +15,5 @@
         <p><span>{%PRICE%}</span></p>
     </div>
     <a href="/product?id={%ID%}"><button class="btn btn-secondary">Details</button></a>
-    <a href="/delete?id={%ID%}"><button class="btn btn-success">Delete Product</button></a>
+    <button class="btn btn-success" id="{%ID%}" onclick="deleteProduct(this.id)">Delete Product</button>
 </div>

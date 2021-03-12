@@ -78,7 +78,7 @@ app.post("/add", (req, res) => {
     res.redirect('/');
 })
 
-app.get("/delete", (req, res) => {
+app.delete("/delete", (req, res) => {
     let products = JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8'));
     const id = Number(req.query.id);
     const product = products.find(product => product.id === id);
@@ -88,7 +88,7 @@ app.get("/delete", (req, res) => {
     }
     products = products.filter(item => item !== product);
     fs.writeFileSync(`${__dirname}/products.json`, JSON.stringify(products, null, 2), 'utf-8')
-    res.redirect('/');
+    res.send(JSON.stringify({'message': 'success'}));
 })
 
-app.listen(port, () => console.log(`app listening on http://localhost:${port}`))
+app.listen(port, err => err ? console.log(err) : console.log(`app listening on http://localhost:${port}`))
