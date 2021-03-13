@@ -47,7 +47,7 @@ app.get('/', (req, res) => {
     const productsTemplate = products.map(
         (product) => renderProduct(product, productCardTemplate)
     ).join('')
-    res.end(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate))
+    res.send(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate))
 });
 
 
