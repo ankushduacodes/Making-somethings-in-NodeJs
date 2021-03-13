@@ -26,6 +26,6 @@ async function getHomePage() {
     }
     const url = `http://localhost:3000/`;
     await xmlhttp.open('GET', url, true);
-    // await xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    await xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     await xmlhttp.send();
 }
