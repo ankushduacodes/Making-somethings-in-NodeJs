@@ -3,43 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Add Product</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="js/index.js" defer></script>
+    <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" rel="stylesheet">
+    <link href="css/form.css" rel="stylesheet">
+    <script defer src="js/form.js"></script>
 </head>
 <body>
-<form action="/add" method="post" id="post-form">
-    <label>Name:
-        <input type="text" name="name" required autofocus minlength="10" maxlength="100">
-    </label><br>
-    <label>Emoji:
-        <input type="text" name="image" required>
-    </label><br>
-    <label>Organic:
-        <input type="checkbox" name="organic">
-    </label><br>
-    <label>Quantity:
-        <input type="number" name="quantity" required>
-    </label><br>
-    <label>Price:
-        <input type="number" name="price" required step="0.01">
-    </label><br>
-    <label>Description:
-        <input type="text" name="description" required>
-    </label><br>
-    <button type="submit" class="btn btn-primary">Add Product</button>
+<form action="/add" id="post-form" method="post">
+    <fieldset>
+        <legend>Product Info</legend>
+        <label>Name:
+            <input autofocus id="product-name" maxlength="100" minlength="10" name="name"
+                   required type="text">
+        </label><br>
+        <label>Emoji:
+            <input id="product-image" name="image"
+                   placeholder="Please add an emoji"
+                   required type="text">
+        </label><br>
+        <label>Organic:
+            <input id="organic" name="organic" type="checkbox">
+        </label><br>
+        <label>Quantity:
+            <input id="product-quantity" min="1" name="quantity" required type="number">
+        </label><br>
+        <label>Price:
+            <input id="product-price" min="1" name="price" required step="0.01" type="number">
+        </label><br>
+        <label>Description:
+            <input id="product-desc" name="description" required type="text">
+        </label><br>
+        <button class="btn btn-primary" id="submit-button" type="submit">Add Product</button>
+    </fieldset>
 </form>
 <a href="/">
-    <button type="button" class="btn btn-primary">Go back</button>
+    <button class="btn btn-primary" id="back-button" type="button">Go back</button>
 </a>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+<script crossorigin="anonymous"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script crossorigin="anonymous"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>
