@@ -97,7 +97,7 @@ app.post('/add', (req, res) => {
     JSON.stringify(products, null, 2),
     'utf-8',
   );
-  res.redirect('/');
+  return res.redirect('/');
 });
 
 app.delete('/delete', (req, res) => {
