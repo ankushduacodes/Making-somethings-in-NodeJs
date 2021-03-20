@@ -97,7 +97,6 @@ app.get('/add', (req, res) => {
 });
 
 app.post('/add',
-  // sanitizeParam(['name', 'image', 'quantity', 'price', 'description']),
   check('name').notEmpty().isLength({
     min: 5,
     max: 100,
