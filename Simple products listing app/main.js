@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
+const { validationResult, check } = require('express-validator');
 
 const app = express();
 const port = 3000;
@@ -25,6 +26,10 @@ const productDescriptionTemplate = fs.readFileSync(
   `${__dirname}/templates/product-description-template.html`,
   'utf-8',
 );
+const formTemplate = fs.readFileSync(
+  `${__dirname}/templates/form.html`,
+  'utf-8',
+);
 
 function renderProduct(product, productCardTemplate) {
   let output = productCardTemplate.replace(/{%ID%}/g, product.id);
@@ -37,6 +42,13 @@ function renderProduct(product, productCardTemplate) {
   return output;
 }
 
+function renderForm(productFormTemplate, errors = undefined) {
+  if (!errors) {
+    return productFormTemplate;
+  }
+  return undefined;
+}
+
 const createProductId = () => {
   const productIds = new Set(
     JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8')).map(
@@ -45,8 +57,8 @@ const createProductId = () => {
   );
   let randomId = Math.floor(Math.random() * 10000000);
   while (productIds.has(randomId)) {
-    // add retries to limit how many times loop fails
-    // before we tell user that product could not be added
+    // eslint-disable-next-line max-len
+    // TODO add retries to limit how many times loop fails before we tell user that product could not be added
     randomId = Math.floor(Math.random() * 10000000);
   }
   return randomId;
@@ -81,24 +93,48 @@ app.get('/product', (req, res) => {
 
 // TODO: add server side validations
 app.get('/add', (req, res) => {
-  res.sendFile(`${__dirname}/templates/form.html`);
+  const template = renderForm(formTemplate);
+  res.end(template, 'utf-8');
 });
 
-app.post('/add', (req, res) => {
-  const products = JSON.parse(
-    fs.readFileSync(`${__dirname}/products.json`, 'utf-8'),
-  );
-  const newProduct = req.body;
-  newProduct.id = createProductId();
-  newProduct.organic = !!newProduct.organic;
-  products.push(newProduct);
-  fs.writeFileSync(
-    `${__dirname}/products.json`,
-    JSON.stringify(products, null, 2),
-    'utf-8',
-  );
-  return res.redirect('/');
-});
+app.post('/add',
+  // sanitizeParam(['name', 'image', 'quantity', 'price', 'description']),
+  check('name').notEmpty().isLength({
+    min: 5,
+    max: 100,
+  }).escape()
+    .matches(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'-]+$/)
+    .withMessage('Name must be of 5 letters minimum and must be valid'),
+  check('image').notEmpty().isLength({
+    min: 1,
+    max: 1,
+  }).escape()
+    .matches(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/)
+    .withMessage('Please add an emoji here'),
+  check('price').notEmpty().escape().toFloat()
+    .withMessage('Please enter a valid value'),
+  check('quantity').notEmpty().escape().toInt()
+    .withMessage('Entered quantity was not valid'),
+  check('description').notEmpty().escape().withMessage('Please enter a valid description of the product'),
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.end(JSON.stringify(errors), 'utf-8');
+    }
+    const products = JSON.parse(
+      fs.readFileSync(`${__dirname}/products.json`, 'utf-8'),
+    );
+    const newProduct = req.body;
+    newProduct.id = createProductId();
+    newProduct.organic = !!newProduct.organic;
+    products.push(newProduct);
+    fs.writeFileSync(
+      `${__dirname}/products.json`,
+      JSON.stringify(products, null, 2),
+      'utf-8',
+    );
+    return res.redirect('/');
+  });
 
 app.delete('/delete', (req, res) => {
   let products = JSON.parse(
