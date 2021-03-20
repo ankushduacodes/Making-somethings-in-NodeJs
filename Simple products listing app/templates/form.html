@@ -13,25 +13,30 @@
     <fieldset>
         <legend>Product Info</legend>
         <label>Name:
-            <input autofocus id="product-name" maxlength="100" minlength="3" name="name"
-                   required type="text">
+            <input autofocus id="product-name" maxlength="100" minlength="3"
+                   name="name" required type="text">
+            <small class="form-text" id="name">{%NAME%}</small>
         </label><br>
         <label>Emoji:
-            <input id="product-image" name="image"
-                   placeholder="Please add an emoji"
-                   required type="text">
+            <input id="product-image"
+                   name="image"
+                   placeholder="Please add an emoji" required type="text">
+            <small class="form-text" id="image">{%IMAGE%}</small>
         </label><br>
         <label>Organic:
             <input id="organic" name="organic" type="checkbox">
         </label><br>
         <label>Quantity:
             <input id="product-quantity" min="1" name="quantity" required type="number">
+            <small class="form-text" id="quantity">{%QUANTITY%}</small>
         </label><br>
         <label>Price:
             <input id="product-price" min="1" name="price" required step="0.01" type="number">
+            <small class="form-text" id="price">{%PRICE%}</small>
         </label><br>
         <label>Description:
             <input id="product-desc" name="description" required type="text">
+            <small class="form-text" id="description">{%DESCRIPTION%}</small>
         </label><br>
         <button class="btn btn-primary" id="submit-button" type="submit">Add Product</button>
     </fieldset>

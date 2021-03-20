@@ -1,3 +1,7 @@
 .invalid {
     border: 2px dotted red;
 }
+
+small {
+    color: red;
+}

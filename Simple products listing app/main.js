@@ -43,10 +43,18 @@ function renderProduct(product, productCardTemplate) {
 }
 
 function renderForm(productFormTemplate, errors = undefined) {
-  if (!errors) {
-    return productFormTemplate;
-  }
-  return undefined;
+  const descriptionError = 'Please enter a valid description of the product';
+  const imageError = 'Please add any one emoji here';
+  const priceError = 'Please enter a valid value';
+  const nameError = 'Name must be of 3 letters minimum and must be valid alphabets';
+  const quantityError = 'Entered quantity was not valid';
+
+  let output = productFormTemplate.replace(/{%NAME%}/g, errors?.name ? nameError : '');
+  output = output.replace(/{%IMAGE%}/g, errors?.image ? imageError : '');
+  output = output.replace(/{%PRICE%}/g, errors?.price ? priceError : '');
+  output = output.replace(/{%QUANTITY%}/g, errors?.quantity ? quantityError : '');
+  output = output.replace(/{%DESCRIPTION%}/g, errors?.description ? descriptionError : '');
+  return output;
 }
 
 const createProductId = () => {
@@ -98,28 +106,27 @@ app.get('/add', (req, res) => {
 
 app.post('/add',
   check('name').notEmpty().isLength({
-    min: 5,
+    min: 3,
     max: 100,
   }).escape()
-    .matches(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'-]+$/)
-    .withMessage('Name must be of 5 letters minimum and must be valid'),
+    .matches(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'-]+$/),
   check('image').notEmpty().isLength({
-    min: 1,
     max: 1,
   }).escape()
-    .matches(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/)
-    .withMessage('Please add any one emoji here'),
+    .matches(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/),
   check('price').notEmpty().escape().toFloat()
-    .withMessage('Please enter a valid value'),
+    .isFloat({ min: 1 }),
   check('quantity').notEmpty().escape().toInt()
-    .withMessage('Entered quantity was not valid'),
-  check('description').notEmpty().escape().withMessage('Please enter a valid description of the product'),
+    .isInt({ min: 1 }),
+  check('description').notEmpty().escape().not()
+    .isNumeric(),
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      // TODO show errors to client
-      return res.end(JSON.stringify(errors), 'utf-8');
+      const newFormTemplate = renderForm(formTemplate, errors.mapped());
+      return res.end(newFormTemplate);
     }
+
     const products = JSON.parse(
       fs.readFileSync(`${__dirname}/products.json`, 'utf-8'),
     );
@@ -127,6 +134,7 @@ app.post('/add',
     newProduct.id = createProductId();
     newProduct.organic = !!newProduct.organic;
     products.push(newProduct);
+
     fs.writeFileSync(
       `${__dirname}/products.json`,
       JSON.stringify(products, null, 2),
