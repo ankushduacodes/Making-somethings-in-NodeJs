@@ -91,7 +91,6 @@ app.get('/product', (req, res) => {
   res.end(productdescTemplate, 'utf-8');
 });
 
-// TODO: add server side validations
 app.get('/add', (req, res) => {
   const template = renderForm(formTemplate);
   res.end(template, 'utf-8');
@@ -110,7 +109,7 @@ app.post('/add',
     max: 1,
   }).escape()
     .matches(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/)
-    .withMessage('Please add an emoji here'),
+    .withMessage('Please add any one emoji here'),
   check('price').notEmpty().escape().toFloat()
     .withMessage('Please enter a valid value'),
   check('quantity').notEmpty().escape().toInt()
@@ -119,6 +118,7 @@ app.post('/add',
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      // TODO show errors to client
       return res.end(JSON.stringify(errors), 'utf-8');
     }
     const products = JSON.parse(
