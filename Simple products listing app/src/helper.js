@@ -1,5 +1,20 @@
 /* This file contains all the helper functions */
 
+const createProductId = () => {
+  const productIds = new Set(
+    JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8')).map(
+      (product) => product.id,
+    ),
+  );
+  let randomId = Math.floor(Math.random() * 10000000);
+  while (productIds.has(randomId)) {
+    // eslint-disable-next-line max-len
+    // TODO add retries to limit how many times loop fails before we tell user that product could not be added
+    randomId = Math.floor(Math.random() * 10000000);
+  }
+  return randomId;
+};
+
 function renderProduct(product, productCardTemplate) {
   let output = productCardTemplate.replace(/{%ID%}/g, product.id);
   output = output.replace(/{%IMAGE%}/g, product.image);
@@ -26,12 +41,16 @@ function renderAddProductForm(productFormTemplate, errors = undefined) {
   return output;
 }
 
-function renderRegisterForm() {
-  //
+// eslint-disable-next-line no-unused-vars
+function renderRegisterForm(registerFormTemplate, errors = undefined) {
+  let output = registerFormTemplate.replace(/{}/g, errors?.username ? '' : '');
+  output = output.replace(/{}/g, errors?.username ? '' : '');
+  return output;
 }
 
 module.exports = {
   renderProduct,
   renderAddProductForm,
   renderRegisterForm,
+  createProductId,
 };

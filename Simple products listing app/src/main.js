@@ -1,8 +1,13 @@
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const { validationResult, check } = require('express-validator');
-const { renderProduct, renderAddProductForm, renderRegisterForm } = require('./helper.js');
+const { validationResult } = require('express-validator');
+const {
+  renderProduct,
+  renderAddProductForm,
+  renderRegisterForm,
+  createProductId,
+} = require('./helper.js');
 const {
   overviewTemplate,
   formTemplate,
@@ -10,6 +15,13 @@ const {
   cardTemplate,
   registerFormTemplate,
 } = require('./templates.js');
+const {
+  validateProductName,
+  validateProductPrice,
+  validateProductDescription,
+  validateProductQuantity,
+  validateProductImage,
+} = require('./validator.js');
 
 const app = express();
 const port = 3000;
@@ -21,21 +33,6 @@ app.use(
   }),
 );
 app.use(express.static(`${__dirname}/static`));
-
-const createProductId = () => {
-  const productIds = new Set(
-    JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8')).map(
-      (product) => product.id,
-    ),
-  );
-  let randomId = Math.floor(Math.random() * 10000000);
-  while (productIds.has(randomId)) {
-    // eslint-disable-next-line max-len
-    // TODO add retries to limit how many times loop fails before we tell user that product could not be added
-    randomId = Math.floor(Math.random() * 10000000);
-  }
-  return randomId;
-};
 
 app.get('/', (req, res) => {
   const products = JSON.parse(
@@ -75,21 +72,11 @@ app.get('/add', (req, res) => {
 });
 
 app.post('/add',
-  check('name').notEmpty().isLength({
-    min: 3,
-    max: 100,
-  }).escape()
-    .matches(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'-]+$/),
-  check('image').notEmpty().isLength({
-    max: 1,
-  }).escape()
-    .matches(/(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/),
-  check('price').notEmpty().escape().toFloat()
-    .isFloat({ min: 1 }),
-  check('quantity').notEmpty().escape().toInt()
-    .isInt({ min: 1 }),
-  check('description').notEmpty().escape().not()
-    .isNumeric(),
+  validateProductName,
+  validateProductImage,
+  validateProductQuantity,
+  validateProductPrice,
+  validateProductDescription,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
