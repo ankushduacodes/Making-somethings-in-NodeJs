@@ -32,7 +32,7 @@ app.use(
     extended: true,
   }),
 );
-app.use(express.static(`${__dirname}/static`));
+app.use(express.static(`${__dirname}/../static`));
 
 app.get('/', (req, res) => {
   const products = JSON.parse(
@@ -64,6 +64,14 @@ app.get('/product', (req, res) => {
 app.get('/register', (req, res) => {
   const updatedRegisterTemplate = renderRegisterForm(registerFormTemplate);
   res.send(updatedRegisterTemplate);
+});
+
+app.post('/register', (req, res) => {
+  res.end('', 'utf-8');
+});
+
+app.get('/login', (req, res) => {
+  res.end('Login', 'utf-8');
 });
 
 app.get('/add', (req, res) => {

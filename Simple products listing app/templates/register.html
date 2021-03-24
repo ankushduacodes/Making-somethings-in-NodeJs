@@ -11,38 +11,31 @@
 <body>
 <form action="/add" id="post-form" method="post">
     <fieldset>
-        <legend>Product Info</legend>
-        <label>Name:
-            <input autofocus id="product-name" maxlength="100" minlength="3"
+        <legend>Register</legend>
+        <label>Username:
+            <input autofocus id="username"
                    name="name" required type="text">
-            <small class="form-text" id="name">{%NAME%}</small>
+            <small class="form-text">{%USERNAME%}</small>
         </label><br>
-        <label>Emoji:
-            <input id="product-image"
-                   name="image"
-                   placeholder="Please add an emoji" required type="text">
-            <small class="form-text" id="image">{%IMAGE%}</small>
+        <label>Email:
+            <input autofocus id="email"
+                   name="email" required type="text">
+            <small class="form-text">{%USERNAME%}</small>
         </label><br>
-        <label>Organic:
-            <input id="organic" name="organic" type="checkbox">
+        <label>Password:
+            <input id="password" name="password" required type="number">
+            <small class="form-text">{%PASSWORD%}</small>
         </label><br>
-        <label>Quantity:
-            <input id="product-quantity" min="1" name="quantity" required type="number">
-            <small class="form-text" id="quantity">{%QUANTITY%}</small>
+        <label>Confirm Password:
+            <input id="confirm_password" min="1" name="conform_password" required step="0.01" type="number">
+            <small class="form-text">{%CONFIRM_PASSWORD%}</small>
         </label><br>
-        <label>Price:
-            <input id="product-price" min="1" name="price" required step="0.01" type="number">
-            <small class="form-text" id="price">{%PRICE%}</small>
-        </label><br>
-        <label>Description:
-            <input id="product-desc" name="description" required type="text">
-            <small class="form-text" id="description">{%DESCRIPTION%}</small>
-        </label><br>
-        <button class="btn btn-primary" id="submit-button" type="submit">Add Product</button>
+        <button class="btn btn-primary" id="register-btn" type="submit">Register</button>
     </fieldset>
 </form>
-<a href="/">
-    <button class="btn btn-primary" id="back-button" type="button">Go back</button>
+<br>
+<a href="/login">
+    <button class="btn btn-primary" id="login-btn" type="button">Login</button>
 </a>
 <script crossorigin="anonymous"
         integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

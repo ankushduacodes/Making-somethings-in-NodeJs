@@ -43,8 +43,15 @@ function renderAddProductForm(productFormTemplate, errors = undefined) {
 
 // eslint-disable-next-line no-unused-vars
 function renderRegisterForm(registerFormTemplate, errors = undefined) {
-  let output = registerFormTemplate.replace(/{}/g, errors?.username ? '' : '');
-  output = output.replace(/{}/g, errors?.username ? '' : '');
+  const usernameError = '';
+  const emailError = '';
+  const passwordError = '';
+  const confirmPasswordError = '';
+
+  let output = registerFormTemplate.replace(/{%USERNAME%}/g, errors?.username ? usernameError : '');
+  output = output.replace(/{%EMAIL%}/g, errors?.email ? emailError : '');
+  output = output.replace(/{%PASSWORD%}/g, errors?.password ? passwordError : '');
+  output = output.replace(/{%CONFIRM_PASSWORD%}/g, errors?.conform_password ? confirmPasswordError : '');
   return output;
 }
 
