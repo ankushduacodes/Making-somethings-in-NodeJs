@@ -2,6 +2,14 @@ const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const { validationResult, check } = require('express-validator');
+const { renderProduct, renderAddProductForm, renderRegisterForm } = require('./helper.js');
+const {
+  overviewTemplate,
+  formTemplate,
+  productDescriptionTemplate,
+  cardTemplate,
+  registerFormTemplate,
+} = require('./templates.js');
 
 const app = express();
 const port = 3000;
@@ -13,49 +21,6 @@ app.use(
   }),
 );
 app.use(express.static(`${__dirname}/static`));
-
-const overviewTemplate = fs.readFileSync(
-  `${__dirname}/templates/template-overview.html`,
-  'utf-8',
-);
-const cardTemplate = fs.readFileSync(
-  `${__dirname}/templates/card-template.html`,
-  'utf-8',
-);
-const productDescriptionTemplate = fs.readFileSync(
-  `${__dirname}/templates/product-description-template.html`,
-  'utf-8',
-);
-const formTemplate = fs.readFileSync(
-  `${__dirname}/templates/form.html`,
-  'utf-8',
-);
-
-function renderProduct(product, productCardTemplate) {
-  let output = productCardTemplate.replace(/{%ID%}/g, product.id);
-  output = output.replace(/{%IMAGE%}/g, product.image);
-  output = output.replace(/{%NAME%}/g, product.name);
-  output = output.replace(/{%ORGANIC%}/g, product.organic);
-  output = output.replace(/{%QUANTITY%}/g, product.quantity);
-  output = output.replace(/{%PRICE%}/g, product.price);
-  output = output.replace(/{%DESCRIPTION%}/g, product.description);
-  return output;
-}
-
-function renderForm(productFormTemplate, errors = undefined) {
-  const descriptionError = 'Please enter a valid description of the product';
-  const imageError = 'Please add any one emoji here';
-  const priceError = 'Please enter a valid value';
-  const nameError = 'Name must be of 3 letters minimum and must be valid alphabets';
-  const quantityError = 'Entered quantity was not valid';
-
-  let output = productFormTemplate.replace(/{%NAME%}/g, errors?.name ? nameError : '');
-  output = output.replace(/{%IMAGE%}/g, errors?.image ? imageError : '');
-  output = output.replace(/{%PRICE%}/g, errors?.price ? priceError : '');
-  output = output.replace(/{%QUANTITY%}/g, errors?.quantity ? quantityError : '');
-  output = output.replace(/{%DESCRIPTION%}/g, errors?.description ? descriptionError : '');
-  return output;
-}
 
 const createProductId = () => {
   const productIds = new Set(
@@ -99,8 +64,13 @@ app.get('/product', (req, res) => {
   res.end(productdescTemplate, 'utf-8');
 });
 
+app.get('/register', (req, res) => {
+  const updatedRegisterTemplate = renderRegisterForm(registerFormTemplate);
+  res.send(updatedRegisterTemplate);
+});
+
 app.get('/add', (req, res) => {
-  const template = renderForm(formTemplate);
+  const template = renderAddProductForm(formTemplate);
   res.end(template, 'utf-8');
 });
 
@@ -123,7 +93,7 @@ app.post('/add',
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const newFormTemplate = renderForm(formTemplate, errors.mapped());
+      const newFormTemplate = renderAddProductForm(formTemplate, errors.mapped());
       return res.end(newFormTemplate);
     }
 
