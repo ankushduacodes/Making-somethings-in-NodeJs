@@ -1,10 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Add Product</title>
+    <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" rel="stylesheet">
+    <link href="css/form.css" rel="stylesheet">
+    <script defer src="js/register.js"></script>
 </head>
 <body>
-$END$
+<form action="/add" id="post-form" method="post">
+    <fieldset>
+        <legend>Product Info</legend>
+        <label>Name:
+            <input autofocus id="product-name" maxlength="100" minlength="3"
+                   name="name" required type="text">
+            <small class="form-text" id="name">{%NAME%}</small>
+        </label><br>
+        <label>Emoji:
+            <input id="product-image"
+                   name="image"
+                   placeholder="Please add an emoji" required type="text">
+            <small class="form-text" id="image">{%IMAGE%}</small>
+        </label><br>
+        <label>Organic:
+            <input id="organic" name="organic" type="checkbox">
+        </label><br>
+        <label>Quantity:
+            <input id="product-quantity" min="1" name="quantity" required type="number">
+            <small class="form-text" id="quantity">{%QUANTITY%}</small>
+        </label><br>
+        <label>Price:
+            <input id="product-price" min="1" name="price" required step="0.01" type="number">
+            <small class="form-text" id="price">{%PRICE%}</small>
+        </label><br>
+        <label>Description:
+            <input id="product-desc" name="description" required type="text">
+            <small class="form-text" id="description">{%DESCRIPTION%}</small>
+        </label><br>
+        <button class="btn btn-primary" id="submit-button" type="submit">Add Product</button>
+    </fieldset>
+</form>
+<a href="/">
+    <button class="btn btn-primary" id="back-button" type="button">Go back</button>
+</a>
+<script crossorigin="anonymous"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>
