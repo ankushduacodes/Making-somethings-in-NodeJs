@@ -23,10 +23,7 @@ const {
   validateProductQuantity,
   validateProductImage,
 } = require('./validator.js');
-const {
-  Product,
-  User,
-} = require('./db');
+const { Product, User } = require('./db');
 
 const app = express();
 const port = 3000;
@@ -66,25 +63,21 @@ app.get('/product', (req, res) => {
     product,
     productDescriptionTemplate,
   );
-  res.end(productdescTemplate, 'utf-8');
+  return res.end(productdescTemplate, 'utf-8');
 });
 
 app.get('/register', (req, res) => {
   const updatedRegisterTemplate = renderRegisterForm(registerFormTemplate);
-  res.send(updatedRegisterTemplate);
+  return res.send(updatedRegisterTemplate);
 });
 
-app.post('/register', (req, res) => {
-  res.end('', 'utf-8');
-});
+app.post('/register', (req, res) => res.end('', 'utf-8'));
 
-app.get('/login', (req, res) => {
-  res.end('Login', 'utf-8');
-});
+app.get('/login', (req, res) => res.end('Login', 'utf-8'));
 
 app.get('/add', (req, res) => {
   const template = renderAddProductForm(formTemplate);
-  res.end(template, 'utf-8');
+  return res.end(template, 'utf-8');
 });
 
 app.post('/add',
@@ -123,8 +116,8 @@ app.delete('/delete', (req, res) => {
   const id = Number(req.query.id);
   const product = products.find((item) => item.id === id);
   if (!product) {
-    res.status(404);
-    res.end('<h1>Product not found</h1>');
+    res.status(404)
+      .send('<h1>Product not found</h1>');
   }
   products = products.filter((item) => item !== product);
   fs.writeFileSync(
@@ -132,7 +125,7 @@ app.delete('/delete', (req, res) => {
     JSON.stringify(products, null, 2),
     'utf-8',
   );
-  res.send(JSON.stringify({ message: 'success' }));
+  return res.send(JSON.stringify({ message: 'success' }));
 });
 
 app.listen(port, (err) => (err

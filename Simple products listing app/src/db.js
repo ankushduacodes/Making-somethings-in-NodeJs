@@ -6,13 +6,13 @@ const { userSchema } = require('../models/userModel');
 
 const uri = `mongodb+srv://${username}:${password}@cluster0.5tig9.mongodb.net/products?retryWrites=true&w=majority`;
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
-  .then(() => console.log('Connected'))
+  .then()
   .catch(console.log);
 
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('connect', () => console.log('Connection Successful'));
+db.once('connected', () => console.log('Connection Successful'));
 
 module.exports = {
   Product: mongoose.model('Product', productSchema),
