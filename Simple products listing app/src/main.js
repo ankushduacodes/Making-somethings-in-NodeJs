@@ -46,7 +46,7 @@ app.get('/', async (req, res) => {
     return productList;
   });
   const productsTemplate = products.map((product) => renderProduct(product, cardTemplate)).join('');
-  res.send(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate));
+  return res.send(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate));
 });
 
 app.get('/product', (req, res) => {
@@ -116,7 +116,7 @@ app.delete('/delete', (req, res) => {
   const id = Number(req.query.id);
   const product = products.find((item) => item.id === id);
   if (!product) {
-    res.status(404)
+    return res.status(404)
       .send('<h1>Product not found</h1>');
   }
   products = products.filter((item) => item !== product);
