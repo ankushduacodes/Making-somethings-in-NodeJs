@@ -43,7 +43,7 @@ app.get('/', async (req, res) => {
   const products = await Product.find((err, productList) => {
     if (err) {
       res.set('Content-Type', 'text/plain');
-      res.status(500)
+      return res.status(500)
         .send('<h2>There was an error on the server and the request could not be completed.</h2>');
     }
     return productList;
@@ -59,8 +59,8 @@ app.get('/product', (req, res) => {
   const id = Number(req.query.id);
   const product = products.find((item) => item.id === id);
   if (!product) {
-    res.status(404);
-    res.end('<h1>Product not found</h1>');
+    return res.status(404)
+      .send('<h1>Product not found</h1>');
   }
   const productdescTemplate = renderProduct(
     product,
