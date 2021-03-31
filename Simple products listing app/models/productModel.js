@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const conn = require('../src/db');
 
 const { Schema } = mongoose;
 
