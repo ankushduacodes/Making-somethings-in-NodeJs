@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const conn = require('../src/db');
 
-const { Schema } = mongoose.Schema;
+const { Schema } = mongoose;
 
-const ProductSchema = new Schema({
+const productSchema = new Schema({
   name: {
     type: String,
     match: /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ∂ð ,.'-]+$/,
@@ -40,5 +41,5 @@ const ProductSchema = new Schema({
 });
 
 module.exports = {
-  Product: mongoose.model('Product', ProductSchema),
+  productSchema,
 };

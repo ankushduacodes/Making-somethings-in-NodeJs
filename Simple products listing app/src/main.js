@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const { validationResult } = require('express-validator');
+
 const {
   renderProduct,
   renderAddProductForm,
@@ -22,6 +23,10 @@ const {
   validateProductQuantity,
   validateProductImage,
 } = require('./validator.js');
+const {
+  Product,
+  User,
+} = require('./db');
 
 const app = express();
 const port = 3000;
