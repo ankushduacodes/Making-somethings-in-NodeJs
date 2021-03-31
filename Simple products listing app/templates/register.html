@@ -2,14 +2,15 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>Add Product</title>
+    <title>Register</title>
     <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" rel="stylesheet">
     <link href="css/form.css" rel="stylesheet">
+    <link href="img/favicon.ico" rel="icon">
     <script defer src="js/register.js"></script>
 </head>
 <body>
-<form action="/add" id="post-form" method="post">
+<form action="/add" id="register-post-form" method="post">
     <fieldset>
         <legend>Register</legend>
         <label>Username:
@@ -19,7 +20,7 @@
         </label><br>
         <label>Email:
             <input autofocus id="email"
-                   name="email" required type="text">
+                   name="email" required type="email">
             <small class="form-text">{%USERNAME%}</small>
         </label><br>
         <label>Password:
