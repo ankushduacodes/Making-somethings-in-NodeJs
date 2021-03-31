@@ -39,13 +39,16 @@ app.use(
 );
 app.use(express.static(`${__dirname}/../static`));
 
-app.get('/', (req, res) => {
-  const products = JSON.parse(
-    fs.readFileSync(`${__dirname}/products.json`, 'utf-8'),
-  );
-  const productsTemplate = products
-    .map((product) => renderProduct(product, cardTemplate))
-    .join('');
+app.get('/', async (req, res) => {
+  const products = await Product.find((err, productList) => {
+    if (err) {
+      res.set('Content-Type', 'text/plain');
+      res.status(500)
+        .send('<h2>There was an error on the server and the request could not be completed.</h2>');
+    }
+    return productList;
+  });
+  const productsTemplate = products.map((product) => renderProduct(product, cardTemplate)).join('');
   res.send(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate));
 });
 

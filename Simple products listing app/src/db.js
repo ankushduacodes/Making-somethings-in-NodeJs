@@ -5,8 +5,8 @@ const { productSchema } = require('../models/productModel');
 const { userSchema } = require('../models/userModel');
 
 const uri = `mongodb+srv://${username}:${password}@cluster0.5tig9.mongodb.net/products?retryWrites=true&w=majority`;
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(console.log)
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+  .then(() => console.log('Connected'))
   .catch(console.log);
 
 const db = mongoose.connection;
