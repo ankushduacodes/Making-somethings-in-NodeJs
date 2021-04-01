@@ -1,19 +1,6 @@
 /* This file contains all the helper functions */
 
-const createProductId = () => {
-  const productIds = new Set(
-    JSON.parse(fs.readFileSync(`${__dirname}/products.json`, 'utf-8')).map(
-      (product) => product.id,
-    ),
-  );
-  let randomId = Math.floor(Math.random() * 10000000);
-  while (productIds.has(randomId)) {
-    // eslint-disable-next-line max-len
-    // TODO add retries to limit how many times loop fails before we tell user that product could not be added
-    randomId = Math.floor(Math.random() * 10000000);
-  }
-  return randomId;
-};
+const createProductId = () => Math.floor(Math.random() * 10000000);
 
 function renderProduct(product, productCardTemplate) {
   let output = productCardTemplate.replace(/{%ID%}/g, product.id);
