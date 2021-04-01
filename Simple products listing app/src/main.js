@@ -41,7 +41,7 @@ app.get('/', async (req, res) => {
     if (err) {
       res.set('Content-Type', 'text/plain');
       return res.status(500)
-        .send('<h2>There was an error on the server and the request could not be completed.</h2>');
+        .send('There was an error on the server and the request could not be completed.');
     }
     return productList;
   });
@@ -49,12 +49,17 @@ app.get('/', async (req, res) => {
   return res.send(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate));
 });
 
-app.get('/product', (req, res) => {
-  const products = JSON.parse(
-    fs.readFileSync(`${__dirname}/products.json`, 'utf-8'),
-  );
+app.get('/product', async (req, res) => {
   const id = Number(req.query.id);
-  const product = products.find((item) => item.id === id);
+  const product = await Product.findOne({ id }, (err, fetchedProduct) => {
+    if (err) {
+      res.set('Content-Type', 'text/plain');
+      return res.status(500)
+        .send('There was an error on the server and the request could not be completed.');
+    }
+    return fetchedProduct;
+  });
+
   if (!product) {
     return res.status(404)
       .send('<h1>Product not found</h1>');
