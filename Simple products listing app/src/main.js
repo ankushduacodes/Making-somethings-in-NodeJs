@@ -37,28 +37,26 @@ app.use(
 app.use(express.static(`${__dirname}/../static`));
 
 app.get('/', async (req, res) => {
-  const products = await Product.find((err, productList) => {
-    if (err) {
-      res.set('Content-Type', 'text/plain');
-      return res.status(500)
-        .send('There was an error on the server and the request could not be completed.');
-    }
-    return productList;
-  });
-  const productsTemplate = products.map((product) => renderProduct(product, cardTemplate)).join('');
-  return res.send(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate));
+  try {
+    // TODO add a message saying no products were found if fetched 0 products from the database
+    const products = await Product.find();
+    const productsTemplate = products.map((product) => renderProduct(product, cardTemplate)).join('');
+    return res.status(200).send(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate));
+  } catch (err) {
+    return res.status(500)
+      .send('There was an error on the server and the request could not be completed.');
+  }
 });
 
 app.get('/product', async (req, res) => {
   const id = Number(req.query.id);
-  const product = await Product.findOne({ id }, (err, fetchedProduct) => {
-    if (err) {
-      res.set('Content-Type', 'text/plain');
-      return res.status(500)
-        .send('There was an error on the server and the request could not be completed.');
-    }
-    return fetchedProduct;
-  });
+  let product;
+  try {
+    product = await Product.findOne({ id });
+  } catch (err) {
+    return res.status(500)
+      .send('There was an error on the server and the request could not be completed.');
+  }
 
   if (!product) {
     return res.status(404)
@@ -92,16 +90,14 @@ app.post('/add',
     const newProduct = req.body;
     newProduct.id = createProductId();
     newProduct.organic = !!newProduct.organic;
-
     const product = new Product(newProduct);
-    // TODO add a new warning to the /add redirect if insertion of new product fails
-    product.save((err, addedProduct) => {
-      if (err) {
-        res.end(renderAddProductForm(formTemplate), 'utf-8');
-      }
-      console.log(addedProduct);
-    });
-    return res.redirect('/');
+    try {
+      await product.save();
+      return res.status(201).redirect('/');
+    } catch (err) {
+      // TODO add a new warning to the /add redirect if insertion of new product fails
+      return res.status(500).send(renderAddProductForm(formTemplate));
+    }
   });
 
 app.delete('/delete', (req, res) => {
@@ -111,8 +107,7 @@ app.delete('/delete', (req, res) => {
   const id = Number(req.query.id);
   const product = products.find((item) => item.id === id);
   if (!product) {
-    return res.status(404)
-      .send('<h1>Product not found</h1>');
+    return res.status(404).json({ message: 'Product not found' });
   }
   products = products.filter((item) => item !== product);
   fs.writeFileSync(
