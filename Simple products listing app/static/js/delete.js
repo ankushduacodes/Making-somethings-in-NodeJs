@@ -1,3 +1,7 @@
+// eslint-disable-next-line max-len
+// TODO better error handling if product deletion fails like giving user a message of some kind to let them know that product was or was not deleted
+// also watch out for if 404 is sent by /delete
+
 async function getHomePage() {
   const xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = async function () {

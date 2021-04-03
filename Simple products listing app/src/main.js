@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs');
 const bodyParser = require('body-parser');
 const { validationResult } = require('express-validator');
 
@@ -41,6 +40,8 @@ app.get('/', async (req, res) => {
     // TODO add a message saying no products were found if fetched 0 products from the database
     const products = await Product.find();
     const productsTemplate = products.map((product) => renderProduct(product, cardTemplate)).join('');
+    // eslint-disable-next-line max-len
+    // TODO do something about status number match if 201 is sent then in delete.js should recognise it as success
     return res.status(200).send(overviewTemplate.replace(/{%PRODUCT_CARDS%}/g, productsTemplate));
   } catch (err) {
     return res.status(500)
@@ -84,7 +85,7 @@ app.post('/add',
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const newFormTemplate = renderAddProductForm(formTemplate, errors.mapped());
-      return res.end(newFormTemplate);
+      return res.end(newFormTemplate, 'utf-8');
     }
 
     const newProduct = req.body;
@@ -100,22 +101,17 @@ app.post('/add',
     }
   });
 
-app.delete('/delete', (req, res) => {
-  let products = JSON.parse(
-    fs.readFileSync(`${__dirname}/products.json`, 'utf-8'),
-  );
+app.delete('/delete', async (req, res) => {
   const id = Number(req.query.id);
-  const product = products.find((item) => item.id === id);
-  if (!product) {
+  try {
+    const product = await Product.findOneAndDelete({ id });
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    return res.status(200).json({ message: 'Product deletion success' });
+  } catch (err) {
     return res.status(404).json({ message: 'Product not found' });
   }
-  products = products.filter((item) => item !== product);
-  fs.writeFileSync(
-    `${__dirname}/products.json`,
-    JSON.stringify(products, null, 2),
-    'utf-8',
-  );
-  return res.send(JSON.stringify({ message: 'success' }));
 });
 
 app.get('/register', (req, res) => {
