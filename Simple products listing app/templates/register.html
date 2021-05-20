@@ -10,7 +10,7 @@
     <script defer src="js/register.js"></script>
 </head>
 <body>
-<form action="/add" id="register-post-form" method="post">
+<form action="/register" id="register-post-form" method="post">
     <fieldset>
         <legend>Register</legend>
         <label>Username:
@@ -24,11 +24,11 @@
             <small class="form-text">{%USERNAME%}</small>
         </label><br>
         <label>Password:
-            <input id="password" name="password" required type="number">
+            <input id="password" name="password" required type="password">
             <small class="form-text">{%PASSWORD%}</small>
         </label><br>
         <label>Confirm Password:
-            <input id="confirm_password" min="1" name="conform_password" required step="0.01" type="number">
+            <input id="confirm_password" min="1" name="conform_password" required step="0.01" type="password">
             <small class="form-text">{%CONFIRM_PASSWORD%}</small>
         </label><br>
         <button class="btn btn-primary" id="register-btn" type="submit">Register</button>
